@@ -18,7 +18,8 @@ class MiProveedorEducativo : MainAPI() {
         page: Int,
         request: MainPageRequest
     ): HomePageResponse {
-        val listaEjemplo = listOf<SearchResponse>()
+        // Corrección: Retornamos una lista vacía mutable válida para la app
+        val listaEjemplo = mutableListOf<SearchResponse>()
         return newHomePageResponse(
             list = listOf(
                 HomePageList(
@@ -33,11 +34,9 @@ class MiProveedorEducativo : MainAPI() {
 
     override suspend fun search(query: String): List<SearchResponse> {
         val queryEncoded = URLEncoder.encode(query, "UTF-8")
-        // El sitio usa un sistema dinámico, usamos una ruta de búsqueda compatible básica
         val urlBusqueda = "$mainUrl/?s=$queryEncoded"
         val document = app.get(urlBusqueda).document
         
-        // Selectores básicos para listar películas en el catálogo
         return document.select("div.movie-item, div.poster").mapNotNull { elemento ->
             val enlaceElemento = elemento.selectFirst("a") ?: return null
             val titulo = elemento.selectFirst(".title, h2, h3")?.text()?.trim() ?: "Sin título"
@@ -60,19 +59,21 @@ class MiProveedorEducativo : MainAPI() {
         val imagen = document.selectFirst("img.poster, .movie-poster img")?.attr("src")
         
         return if (url.contains("/tv-series/")) {
-            // Estructura básica para Series
             val episodios = mutableListOf<Episode>()
             document.select(".episode-item, a[href*='/episode/']").forEach { item ->
                 val epUrl = fixUrl(item.attr("href"))
                 val epName = item.text().trim()
-                episodios.add(Episode(epUrl, epName))
+                // Corrección: Usamos el método moderno exigido por la app
+                val nuevoEpisodio = newEpisode(epUrl) {
+                    this.name = epName
+                }
+                episodios.add(nuevoEpisodio)
             }
             newTvSeriesLoadResponse(titulo, url, TvType.TvSeries, episodios) {
                 this.posterUrl = imagen
                 this.plot = descripcion
             }
         } else {
-            // Estructura para Películas
             newMovieLoadResponse(titulo, url, TvType.Movie, url) {
                 this.posterUrl = imagen
                 this.plot = descripcion
@@ -88,7 +89,6 @@ class MiProveedorEducativo : MainAPI() {
     ): Boolean {
         val document = app.get(data).document
         
-        // ESTRATEGIA 1: Iframes embebidos
         document.select("iframe").forEach { iframe ->
             val iframeSrc = iframe.attr("src").trim()
             if (iframeSrc.isNotEmpty()) {
@@ -96,33 +96,34 @@ class MiProveedorEducativo : MainAPI() {
             }
         }
         
-        // ESTRATEGIA 2: Código JavaScript (reemplazado por el nuevo formato estructurado)
         val scriptContenido = document.select("script").joinToString("\n") { it.html() }
         val regexMp4 = Regex("""file"[\s]*:[\s]*"([^"]+\.mp4[^"]*)""")
         val regexM3u8 = Regex("""file"[\s]*:[\s]*"([^"]+\.m3u8[^"]*)""")
         
         regexMp4.findAll(scriptContenido).forEach { match ->
+            // Corrección: Cambiado al constructor estructurado moderno obligatorio
             callback.invoke(
-                ExtractorLink(
-                    name,
-                    "$name MP4",
-                    match.groupValues[1],
-                    mainUrl,
-                    Qualities.Unknown.value,
-                    false
+                newExtractorLink(
+                    source = name,
+                    name = "$name MP4",
+                    url = match.groupValues[1],
+                    referer = mainUrl,
+                    quality = Qualities.Unknown.value,
+                    isM3u8 = false
                 )
             )
         }
         
         regexM3u8.findAll(scriptContenido).forEach { match ->
+            // Corrección: Cambiado al constructor estructurado moderno obligatorio
             callback.invoke(
-                ExtractorLink(
-                    name,
-                    "$name M3U8",
-                    match.groupValues[1],
-                    mainUrl,
-                    Qualities.Unknown.value,
-                    true
+                newExtractorLink(
+                    source = name,
+                    name = "$name M3U8",
+                    url = match.groupValues[1],
+                    referer = mainUrl,
+                    quality = Qualities.Unknown.value,
+                    isM3u8 = true
                 )
             )
         }
