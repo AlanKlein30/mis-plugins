@@ -1,0 +1,9 @@
+[
+  {
+    "name": "CinemaCity Personal",
+    "url": "https://githubusercontent.com",
+    "language": "es",
+    "version": 1,
+    "tvTypes": ["Movie", "TvSeries"]
+  }
+]
