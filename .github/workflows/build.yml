@@ -21,10 +21,11 @@ jobs:
       - name: Clonar compilador oficial
         run: |
           git clone https://github.com compilador
-          cp CinemaCity.kt compilador/src/main/com/lagradost/CinemaCity.kt
+          mkdir -p compilador/app/src/main/java/com/lagradost
+          cp CinemaCity.kt compilador/app/src/main/java/com/lagradost/CinemaCity.kt
 
-      - name: Ejecutar compilación
+      - name: Ejecutar compilacion
         run: |
           cd compilador
           chmod +x gradlew
-          ./gradlew make
+          ./gradlew assembleDebug
