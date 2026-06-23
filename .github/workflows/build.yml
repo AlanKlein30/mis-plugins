@@ -9,8 +9,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Descargar repositorio
+      - name: Descargar repositorio actual
         uses: actions/checkout@v4
+
+      - name: Descargar herramientas de Cloudstream
+        uses: actions/checkout@v4
+        with:
+          repository: 'recloudstream/cloudstream-extensions'
+          path: 'compilador'
 
       - name: Configurar Java
         uses: actions/setup-java@v4
@@ -18,9 +24,8 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Clonar compilador oficial
+      - name: Preparar archivo del plugin
         run: |
-          git clone https://github.com/recloudstream/cloudstream-extensions compilador
           mkdir -p compilador/app/src/main/java/com/lagradost
           cp CinemaCity.kt compilador/app/src/main/java/com/lagradost/CinemaCity.kt
 
