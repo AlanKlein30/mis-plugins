@@ -12,17 +12,15 @@ jobs:
       - name: Descargar repositorio actual
         uses: actions/checkout@v4
 
-      - name: Descargar herramientas de Cloudstream
-        uses: actions/checkout@v4
-        with:
-          repository: 'recloudstream/cloudstream-extensions'
-          path: 'compilador'
-
       - name: Configurar Java
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
+
+      - name: Descargar Compilador Publico
+        run: |
+          git clone https://github.com/recloudstream/cloudstream compilador
 
       - name: Preparar archivo del plugin
         run: |
