@@ -1,0 +1,8 @@
+{
+  "name": "CinemaCity Personal Repo",
+  "description": "Mi repositorio privado de Cloudstream",
+  "manifestVersion": 1,
+  "pluginLists": [
+    "https://githubusercontent.com"
+  ]
+}
