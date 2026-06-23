@@ -18,8 +18,8 @@ class MiProveedorEducativo : MainAPI() {
         page: Int,
         request: MainPageRequest
     ): HomePageResponse {
-        // Corrección: Retornamos una lista vacía mutable válida para la app
-        val listaEjemplo = mutableListOf<SearchResponse>()
+        // Corrección definitiva: Inicializamos la lista con el tipo estricto que pide la firma
+        val listaEjemplo = emptyList<SearchResponse>()
         return newHomePageResponse(
             list = listOf(
                 HomePageList(
@@ -63,7 +63,6 @@ class MiProveedorEducativo : MainAPI() {
             document.select(".episode-item, a[href*='/episode/']").forEach { item ->
                 val epUrl = fixUrl(item.attr("href"))
                 val epName = item.text().trim()
-                // Corrección: Usamos el método moderno exigido por la app
                 val nuevoEpisodio = newEpisode(epUrl) {
                     this.name = epName
                 }
@@ -101,9 +100,9 @@ class MiProveedorEducativo : MainAPI() {
         val regexM3u8 = Regex("""file"[\s]*:[\s]*"([^"]+\.m3u8[^"]*)""")
         
         regexMp4.findAll(scriptContenido).forEach { match ->
-            // Corrección: Cambiado al constructor estructurado moderno obligatorio
+            // Corrección: Invocamos el objeto plano sin usar nombres de parámetros conflictivos
             callback.invoke(
-                newExtractorLink(
+                ExtractorLink(
                     source = name,
                     name = "$name MP4",
                     url = match.groupValues[1],
@@ -115,9 +114,9 @@ class MiProveedorEducativo : MainAPI() {
         }
         
         regexM3u8.findAll(scriptContenido).forEach { match ->
-            // Corrección: Cambiado al constructor estructurado moderno obligatorio
+            // Corrección: Invocamos el objeto plano sin usar nombres de parámetros conflictivos
             callback.invoke(
-                newExtractorLink(
+                ExtractorLink(
                     source = name,
                     name = "$name M3U8",
                     url = match.groupValues[1],
