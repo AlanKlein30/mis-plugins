@@ -20,7 +20,7 @@ jobs:
 
       - name: Clonar compilador oficial
         run: |
-          git clone https://github.com compilador
+          git clone https://github.com/recloudstream/cloudstream-extensions compilador
           mkdir -p compilador/app/src/main/java/com/lagradost
           cp CinemaCity.kt compilador/app/src/main/java/com/lagradost/CinemaCity.kt
 
