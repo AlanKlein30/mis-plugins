@@ -12,7 +12,6 @@ class MiProveedorEducativo : MainAPI() {
     override var name = "CinemaCity Personal"
     override var lang = "es"
     override var hasMainPage = true
-    override var hasSearch = true
 
     // Define qué tipos de contenido ofrece este proveedor
     override val supportedTypes = setOf(
