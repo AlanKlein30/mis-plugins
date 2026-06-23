@@ -1,0 +1,30 @@
+name: Compilar Plugin Cloudstream
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Clonar compilador oficial
+        run: |
+          git clone https://github.com compilador
+          cp CinemaCity.kt compilador/src/main/com/lagradost/CinemaCity.kt
+
+      - name: Ejecutar compilación
+        run: |
+          cd compilador
+          chmod +x gradlew
+          ./gradlew make
